@@ -15,17 +15,20 @@ MODEL_CARDS = {
         'vits': {
             'name' : 'depth_anything_v2_small',
             'configs': 'depth_anything_v2/vits_pretrain',
-            'path': f'{DEPTH_PRETRAINED_PATH}/depth_anything/Depth-Anything-V2-small-hf/depth_anything_v2_vits.pth'
+            'path': f'{DEPTH_PRETRAINED_PATH}/depth_anything/Depth-Anything-V2-small-hf/depth_anything_v2_vits.pth',
+            'url': 'https://huggingface.co/depth-anything/Depth-Anything-V2-Small/resolve/main/depth_anything_v2_vits.pth'
         },
         'vitb': {
             'name' : 'depth_anything_v2_base',
             'configs': 'depth_anything_v2/vitb_pretrain', 
-            'path': f'{DEPTH_PRETRAINED_PATH}/depth_anything/Depth-Anything-V2-base-hf'
+            'path': f'{DEPTH_PRETRAINED_PATH}/depth_anything/Depth-Anything-V2-base-hf/depth_anything_v2_vitb.pth',
+            'url': 'https://huggingface.co/depth-anything/Depth-Anything-V2-Base/resolve/main/depth_anything_v2_vitb.pth'
         },
         'vitl': {
             'name' : 'depth_anything_v2_large',
             'configs': 'depth_anything_v2/vitl_pretrain', 
-            'path': f'{DEPTH_PRETRAINED_PATH}/depth_anything/Depth-Anything-V2-large-hf'
+            'path': f'{DEPTH_PRETRAINED_PATH}/depth_anything/Depth-Anything-V2-large-hf/depth_anything_v2_vitl.pth',
+            'url': 'https://huggingface.co/depth-anything/Depth-Anything-V2-Large/resolve/main/depth_anything_v2_vitl.pth'
         }
     },
     'vggt': {
@@ -34,7 +37,8 @@ MODEL_CARDS = {
         'vggt_1b': {
             'name': 'vggt_1b_depth',
             'configs': 'vggt/1b_pretrain',
-            'path': f'{DEPTH_PRETRAINED_PATH}/vggt/VGGT-1B-Depth/model.pt'
+            'path': f'{DEPTH_PRETRAINED_PATH}/vggt/VGGT-1B-Depth/model.pt',
+            'url': 'https://huggingface.co/hpnquoc/VGGT-1B-Depth/resolve/main/model.pt'
         }
     }
 }
