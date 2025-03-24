@@ -1,0 +1,4 @@
+model:
+  encoder: 'vitl'
+  features: 256
+  out_channels: [256, 512, 1024, 1024]

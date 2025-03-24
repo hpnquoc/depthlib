@@ -7,11 +7,15 @@
 import torch
 import torch.nn as nn
 from huggingface_hub import PyTorchModelHubMixin  # used for model hub
+from torchvision.transforms import Compose
 
-from vggt.models.aggregator import Aggregator
-from vggt.heads.camera_head import CameraHead
-from vggt.heads.dpt_head import DPTHead
-from vggt.heads.track_head import TrackHead
+from .models.aggregator import Aggregator
+from .heads.dpt_head import DPTHead
+
+from .utils.load_fn import load_and_preprocess_images
+from .utils.transform import Resize, NormalizeImage, PrepareForNet
+import cv2
+import torch.nn.functional as F
 
 
 class VGGT(nn.Module, PyTorchModelHubMixin):
@@ -64,3 +68,43 @@ class VGGT(nn.Module, PyTorchModelHubMixin):
         predictions["images"] = images
 
         return predictions
+
+    @torch.no_grad()
+    def infer_image(self, raw_image, input_size=518):
+        image, (h, w) = self.image2tensor(raw_image, input_size)
+        
+        predictions = self.forward(image)
+
+        depth = predictions["depth"].squeeze(-1).squeeze(0)
+        
+        depth = F.interpolate(depth[:, None], (h, w), mode="bilinear", align_corners=True)[0, 0]
+        
+        return depth
+
+    def image2tensor(self, raw_image, input_size=518):        
+        transform = Compose([
+            Resize(
+                width=input_size,
+                height=input_size,
+                resize_target=False,
+                keep_aspect_ratio=True,
+                ensure_multiple_of=14,
+                resize_method='upper_bound',
+                image_interpolation_method=cv2.INTER_CUBIC,
+            ),
+            # NormalizeImage(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            PrepareForNet(),
+        ])
+        
+        h, w = raw_image.shape[:2]
+        
+        image = cv2.cvtColor(raw_image, cv2.COLOR_BGR2RGB) / 255.0
+        
+        image = transform({'image': image})['image']
+        image = torch.from_numpy(image).unsqueeze(0)
+        
+        DEVICE = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
+        image = image.to(DEVICE)
+        
+        return image, (h, w)
+    
