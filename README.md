@@ -16,8 +16,6 @@ This repository contains a lightweight and modular **Depth Estimation Library** 
     - [DepthAnythingV2](#depthanythingv2)
     - [VGGT](#vggt)
   - [Usage Examples](#usage-examples)
-    - [Example 1: Using DepthAnythingV2 (Base Variant)](#example-1-using-depthanythingv2-base-variant)
-    - [Example 2: Batch Processing with VGGT](#example-2-batch-processing-with-vggt)
   - [Pre-trained Models](#pre-trained-models)
   - [Contributing](#contributing)
   - [Citation](#citation)
@@ -102,14 +100,12 @@ The library supports the following models and variants:
 
 ## Usage Examples
 
-### Example 1: Using DepthAnythingV2 (Base Variant)
-
 ```python
 from lib.depthlib import get_model
 import cv2
 
 # Load the model
-model = get_model('depthanythingv2', 'vitb').to('cuda').eval()
+model = get_model('<model_name>', '<variant>').to('cuda').eval()
 
 # Load and preprocess the image
 img = cv2.imread('example.jpg')
@@ -124,28 +120,6 @@ depth = (depth * 255).astype('uint8')
 cv2.imshow('Depth Map', depth)
 cv2.waitKey(0)
 ```
-
-### Example 2: Batch Processing with VGGT
-
-```python
-from lib.depthlib import get_model
-import cv2
-import glob
-
-# Load the model
-model = get_model('vggt', 'vggt_1b').to('cuda').eval()
-
-# Process a batch of images
-for img_path in glob.glob('images/*.jpg'):
-    img = cv2.imread(img_path)
-    depth = model.infer_image(img)
-    depth = depth.cpu().numpy()
-    depth = (depth - depth.min()) / (depth.max() - depth.min())
-    depth = (depth * 255).astype('uint8')
-    cv2.imwrite(f'depth_{img_path}', depth)
-```
-
----
 
 ## Pre-trained Models
 
@@ -182,7 +156,3 @@ If you use this library in your research, please cite it as follows:
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize this README further based on additional features or specific details about your library!
