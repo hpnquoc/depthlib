@@ -125,8 +125,8 @@ cv2.waitKey(0)
 
 Pre-trained models can be downloaded from the following links:
 
-- **DepthAnythingV2**: [Download Link](#)
-- **VGGT**: [Download Link](#)
+- **DepthAnythingV2**: [Download Link](https://huggingface.co/collections/depth-anything/depth-anything-v2-666b22412f18a6dbfde23a93)
+- **VGGT**: [Download Link](https://huggingface.co/collections/hpnquoc/vggt-depth-67e123e79885234f4f0fd94d)
 
 Place the downloaded weights in the `pretrained/` directory and ensure the paths in `MODEL_CARDS` are correctly configured.
 
