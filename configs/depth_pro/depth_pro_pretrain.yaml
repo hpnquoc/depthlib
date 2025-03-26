@@ -1,0 +1,56 @@
+model:
+  enc_conf:
+    dims_encoder: [256, 512, 1024, 1024]
+    patch_encoder:
+      name: "dinov2l16_384"
+      params:
+          in_chans: 3
+          embed_dim: 1024
+          encoder_feature_layer_ids: [5, 11, 17, 23]
+          encoder_feature_dims: [256, 512, 1024, 1024]
+          img_size: 384
+          patch_size: 16
+          timm_preset: "vit_large_patch14_dinov2"
+          timm_img_size: 518
+          timm_patch_size: 14
+    image_encoder:
+      name: "dinov2l16_384"
+      params:
+          in_chans: 3
+          embed_dim: 1024
+          encoder_feature_layer_ids: [5, 11, 17, 23]
+          encoder_feature_dims: [256, 512, 1024, 1024]
+          img_size: 384
+          patch_size: 16
+          timm_preset: "vit_large_patch14_dinov2"
+          timm_img_size: 518
+          timm_patch_size: 14
+    hook_block_ids: [5, 11, 17, 23]
+    decoder_features: 256
+
+  dec_conf:
+    dims_encoder: [256, 256, 512, 1024, 1024]
+    dim_decoder: 256
+
+  fov_conf: 
+      num_features: 256
+      fov_encoder:
+        name: "dinov2l16_384"
+        params:
+            in_chans: 3
+            embed_dim: 1024
+            encoder_feature_layer_ids: [5, 11, 17, 23]
+            encoder_feature_dims: [256, 512, 1024, 1024]
+            img_size: 384
+            patch_size: 16
+            timm_preset: "vit_large_patch14_dinov2"
+            timm_img_size: 518
+            timm_patch_size: 14
+
+  last_dims: [32, 1]
+  use_fov_head: True
+
+preprocess:
+  normalize: 
+    mean: [0.5, 0.5, 0.5]
+    std: [0.5, 0.5, 0.5]

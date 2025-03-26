@@ -40,6 +40,16 @@ MODEL_CARDS = {
             'path': f'{DEPTH_PRETRAINED_PATH}/vggt/VGGT-1B-Depth/model.pt',
             'url': 'https://huggingface.co/hpnquoc/VGGT-1B-Depth/resolve/main/model.pt'
         }
+    },
+    'depthpro': {
+        'module': 'depth_pro',
+        'model': 'DepthPro',
+        'depthpro': {
+            'name': 'depth_pro',
+            'configs': 'depth_pro/depth_pro_pretrain',
+            'path': f'{DEPTH_PRETRAINED_PATH}/depth_pro/depth_pro.pt',
+            'url': 'https://ml-site.cdn-apple.com/models/depth-pro/depth_pro.pt'
+        }
     }
 }
 
@@ -70,5 +80,5 @@ def get_model(model_name, variant):
     model_conf = MODEL_CARDS[model_name][variant]
     module = importlib.import_module(MODEL_CARDS[model_name]['module'])
     model = getattr(module, MODEL_CARDS[model_name]['model'])(**load_config(model_conf['configs'])['model'])
-    model.load_state_dict(torch.load(model_conf['path']))
+    model.load_state_dict(torch.load(model_conf['path']), strict=False)
     return model
