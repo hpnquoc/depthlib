@@ -15,6 +15,7 @@ This repository contains a lightweight and modular **Depth Estimation Library** 
   - [Model Cards](#model-cards)
     - [DepthAnythingV2](#depthanythingv2)
     - [VGGT](#vggt)
+    - [Depth Pro](#depth-pro)
   - [Usage Examples](#usage-examples)
   - [Pre-trained Models](#pre-trained-models)
   - [Contributing](#contributing)
@@ -96,6 +97,12 @@ The library supports the following models and variants:
 |---------|----------------|--------------------|------------------------------------------------------------------|
 | 1B      | `vggt_1b_depth` | `vggt/1b_pretrain` | [Download](https://huggingface.co/hpnquoc/VGGT-1B-Depth/resolve/main/model.pt?download=true)  |
 
+### Depth Pro
+
+| Variant | Name           | Configs            | Pre-trained Path                                                |
+|---------|----------------|--------------------|------------------------------------------------------------------|
+| depth_pro      | `depth_pro` | `depth_pro/depth_pro_pretrain` | [Download](https://huggingface.co/apple/DepthPro/resolve/main/depth_pro.pt?download=true)  |
+
 ---
 
 ## Usage Examples
@@ -127,6 +134,7 @@ Pre-trained models can be downloaded from the following links:
 
 - **DepthAnythingV2**: [Download Link](https://huggingface.co/collections/depth-anything/depth-anything-v2-666b22412f18a6dbfde23a93)
 - **VGGT**: [Download Link](https://huggingface.co/collections/hpnquoc/vggt-depth-67e123e79885234f4f0fd94d)
+- **DepthPro**: [Download Link](https://huggingface.co/apple/DepthPro)
 
 Place the downloaded weights in the `pretrained/` directory and ensure the paths in `MODEL_CARDS` are correctly configured.
 
