@@ -50,7 +50,16 @@ model:
   last_dims: [32, 1]
   use_fov_head: True
 
-preprocess:
-  normalize: 
+transform:
+  ToTensor:
+  Resize:
+    width: 1536
+    height: 1536
+    resize_target: False
+    keep_aspect_ratio: False
+    ensure_multiple_of: 1.0
+    resize_method: 'lower_bound'
+  Normalize: 
     mean: [0.5, 0.5, 0.5]
     std: [0.5, 0.5, 0.5]
+  ConvertImageDtype:

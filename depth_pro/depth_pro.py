@@ -9,20 +9,15 @@ from typing import Mapping, Optional, Tuple, Union
 
 import torch
 from torch import nn
-from torchvision.transforms import (
-    Compose,
-    ConvertImageDtype,
-    Lambda,
-    Normalize,
-    ToTensor,
-)
+
+from lib.depthlib.modelbase import ModelBase
 
 from .network.decoder import MultiresConvDecoder
 from .network.encoder import DepthProEncoder
 from .network.fov import FOVNetwork
 from .network.vit_factory import create_vit
 
-class DepthPro(nn.Module):
+class DepthPro(ModelBase):
     """DepthPro network."""
 
     def __init__(
@@ -123,7 +118,8 @@ class DepthPro(nn.Module):
     @torch.no_grad()
     def infer_image(
         self,
-        x: torch.Tensor,
+        x,
+        transform = None,
         f_px: Optional[Union[float, torch.Tensor]] = None,
         interpolation_mode="bilinear",
     ) -> Mapping[str, torch.Tensor]:
@@ -145,18 +141,27 @@ class DepthPro(nn.Module):
             Tensor dictionary (torch.Tensor): depth [m], focallength [pixels].
 
         """
+        H, W = x.shape[:2]
+        if transform is not None:
+            x = transform(x).to(self.device)
+        else:
+            x = x
+
         if len(x.shape) == 3:
             x = x.unsqueeze(0)
-        _, _, H, W = x.shape
-        resize = H != self.img_size or W != self.img_size
 
-        if resize:
-            x = nn.functional.interpolate(
-                x,
-                size=(self.img_size, self.img_size),
-                mode=interpolation_mode,
-                align_corners=False,
-            )
+        # if len(x.shape) == 3:
+        #     x = x.unsqueeze(0)
+        # _, _, H, W = x.shape
+        # resize = H != self.img_size or W != self.img_size
+
+        # if resize:
+        #     x = nn.functional.interpolate(
+        #         x,
+        #         size=(self.img_size, self.img_size),
+        #         mode=interpolation_mode,
+        #         align_corners=False,
+        #     )
 
         canonical_inverse_depth, fov_deg = self.forward(x)
         if f_px is None:
@@ -165,10 +170,10 @@ class DepthPro(nn.Module):
         inverse_depth = canonical_inverse_depth * (W / f_px)
         f_px = f_px.squeeze()
 
-        if resize:
-            inverse_depth = nn.functional.interpolate(
-                inverse_depth, size=(H, W), mode=interpolation_mode, align_corners=False
-            )
+        # if resize:
+        inverse_depth = nn.functional.interpolate(
+            inverse_depth, size=(H, W), mode=interpolation_mode, align_corners=False
+        )
 
         depth = 1.0 / torch.clamp(inverse_depth, min=1e-4, max=1e4)
 

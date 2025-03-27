@@ -4,6 +4,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision.transforms import Compose
 
+from lib.depthlib.modelbase import ModelBase
+
 from .dinov2 import DINOv2
 from .util.blocks import FeatureFusionBlock, _make_scratch
 from .util.transform import Resize, NormalizeImage, PrepareForNet
@@ -150,7 +152,7 @@ class DPTHead(nn.Module):
         return out
 
 
-class DepthAnythingV2(nn.Module):
+class DepthAnythingV2(ModelBase):
     def __init__(
         self, 
         encoder='vitl', 
@@ -182,40 +184,23 @@ class DepthAnythingV2(nn.Module):
         depth = F.relu(depth)
         
         return depth.squeeze(1)
-    
+
     @torch.no_grad()
-    def infer_image(self, raw_image, input_size=518):
-        image, (h, w) = self.image2tensor(raw_image, input_size)
-        
+    def infer_image(self, raw_image, transform=None):
+        h, w = raw_image.shape[:2]
+        if transform is not None:
+            image = transform(raw_image).to(self.device)
+        else:
+            image = raw_image
+
+        if len(image.shape) == 3:
+            image = image.unsqueeze(0)
+        # _, _, H, W = image.shape
+
         depth = self.forward(image)
         
         depth = F.interpolate(depth[:, None], (h, w), mode="bilinear", align_corners=True)[0, 0]
         
-        return depth
-    
-    def image2tensor(self, raw_image, input_size=518):        
-        transform = Compose([
-            Resize(
-                width=input_size,
-                height=input_size,
-                resize_target=False,
-                keep_aspect_ratio=True,
-                ensure_multiple_of=14,
-                resize_method='lower_bound',
-                image_interpolation_method=cv2.INTER_CUBIC,
-            ),
-            NormalizeImage(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            PrepareForNet(),
-        ])
-        
-        h, w = raw_image.shape[:2]
-        
-        image = cv2.cvtColor(raw_image, cv2.COLOR_BGR2RGB) / 255.0
-        
-        image = transform({'image': image})['image']
-        image = torch.from_numpy(image).unsqueeze(0)
-        
-        DEVICE = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
-        image = image.to(DEVICE)
-        
-        return image, (h, w)
+        return {
+            "depth": depth
+        }
